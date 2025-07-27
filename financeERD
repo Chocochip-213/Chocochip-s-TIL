@@ -1,0 +1,62 @@
+erDiagram
+    users {
+        UUID user_id PK "고객 고유 ID"
+        VARCHAR name "이름"
+        VARCHAR email "이메일 (UNIQUE)"
+    }
+
+    auth_credentials {
+        UUID user_id PK, FK "사용자 ID"
+        VARCHAR hashed_password "해시된 비밀번호"
+    }
+
+    accounts {
+        UUID account_id PK "계좌 고유 ID"
+        UUID user_id FK "고객 ID"
+        VARCHAR account_number "계좌번호 (UNIQUE)"
+        DECIMAL balance "잔액 (CHECK >= 0)"
+        INTEGER version "버전 (Optimistic Locking)"
+    }
+
+    transfers {
+        UUID transfer_id PK "이체 고유 ID"
+        UUID source_account_id FK "출금 계좌 ID"
+        UUID destination_account_id FK "입금 계좌 ID"
+        UUID transaction_id FK "원장 거래 ID"
+        DECIMAL amount "이체 금액"
+        VARCHAR status "이체 상태 (PENDING, COMPLETED, FAILED)"
+        TIMESTAMPTZ initiated_at "요청 시각"
+    }
+
+    ledger_transactions {
+        UUID transaction_id PK "거래 고유 ID"
+        VARCHAR transaction_status "거래 상태 (PENDING, POSTED)"
+        TIMESTAMPTZ created_at "생성 시각"
+    }
+
+    ledger_entries {
+        BIGSERIAL entry_id PK "원장 항목 ID"
+        UUID transaction_id FK "거래 ID"
+        UUID account_id FK "계좌 ID"
+        VARCHAR entry_type "항목 유형 (DEBIT/CREDIT)"
+        DECIMAL amount "금액 (CHECK > 0)"
+    }
+
+    idempotency_keys {
+        UUID key PK "멱등성 키"
+        UUID user_id FK "사용자 ID"
+        CHAR request_hash "요청 해시"
+        TIMESTAMPTZ locked_at "잠금 시각"
+    }
+
+    %% Relationships
+    users ||--|| auth_credentials : "인증"
+    users ||--o{ accounts : "보유"
+    users ||--o{ idempotency_keys : "요청"
+
+    accounts ||--o{ ledger_entries : "포함"
+    accounts }o--|| transfers : "출금"
+    accounts }o--|| transfers : "입금"
+
+    ledger_transactions ||--|| transfers : "실행"
+    ledger_transactions ||--o{ ledger_entries : "구성"

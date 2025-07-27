@@ -1,0 +1,144 @@
+erDiagram
+    users {
+        UUID user_id PK "고객 고유 ID"
+        VARCHAR name "이름"
+        VARCHAR email "이메일 (UNIQUE)"
+        VARCHAR phone_number "전화번호 (UNIQUE)"
+        DATE date_of_birth "생년월일"
+        TEXT address "주소"
+        TIMESTAMPTZ created_at "생성 시각"
+        TIMESTAMPTZ updated_at "수정 시각"
+        TIMESTAMPTZ deleted_at "삭제 시각 (Soft Delete)"
+    }
+
+    auth_credentials {
+        UUID user_id PK, FK "사용자 ID"
+        VARCHAR hashed_password "해시된 비밀번호"
+        TEXT mfa_config "MFA 설정"
+        TIMESTAMPTZ updated_at "수정 시각"
+    }
+
+    kyc_verifications {
+        UUID verification_id PK "신원 확인 ID"
+        UUID user_id FK "사용자 ID"
+        VARCHAR status "상태 (PENDING, VERIFIED, FAILED)"
+        TEXT details "상세 정보 (e.g., 신분증 정보)"
+        TIMESTAMPTZ created_at "요청 시각"
+        TIMESTAMPTZ updated_at "처리 시각"
+    }
+
+    login_history {
+        BIGSERIAL history_id PK "로그인 기록 ID"
+        UUID user_id FK "사용자 ID"
+        TIMESTAMPTZ login_at "로그인 시각"
+        VARCHAR ip_address "IP 주소"
+        TEXT user_agent "사용자 환경"
+        VARCHAR status "상태 (SUCCESS, FAILED)"
+    }
+
+    accounts {
+        UUID account_id PK "계좌 고유 ID"
+        UUID user_id FK "고객 ID"
+        VARCHAR account_number "계좌번호 (UNIQUE)"
+        VARCHAR account_type "계좌 종류 (e.g., SAVING, CHECKING)"
+        VARCHAR account_status "계좌 상태 (e.g., ACTIVE, DORMANT, CLOSED)"
+        DECIMAL balance "잔액 (CHECK >= 0)"
+        VARCHAR currency "통화"
+        INTEGER version "버전 (Optimistic Locking)"
+        TIMESTAMPTZ created_at "생성 시각"
+        TIMESTAMPTZ updated_at "수정 시각"
+    }
+
+    transfers {
+        UUID transfer_id PK "이체 고유 ID"
+        UUID source_account_id FK "출금 계좌 ID"
+        UUID destination_account_id FK "입금 계좌 ID"
+        UUID transaction_id FK "원장 거래 ID"
+        DECIMAL amount "이체 금액"
+        VARCHAR currency "통화"
+        VARCHAR status "이체 상태 (PENDING, COMPLETED, FAILED, CANCELED)"
+        TEXT memo "메모"
+        TIMESTAMPTZ initiated_at "요청 시각"
+        TIMESTAMPTZ completed_at "완료 시각"
+    }
+
+    ledger_transactions {
+        UUID transaction_id PK "거래 고유 ID"
+        TEXT description "거래 설명"
+        VARCHAR transaction_status "거래 상태 (e.g., PENDING, POSTED)"
+        TIMESTAMPTZ created_at "생성 시각"
+    }
+
+    ledger_entries {
+        BIGSERIAL entry_id PK "원장 항목 ID"
+        UUID transaction_id FK "거래 ID"
+        UUID account_id FK "계좌 ID"
+        VARCHAR entry_type "항목 유형 (DEBIT/CREDIT)"
+        DECIMAL amount "금액 (CHECK > 0)"
+        TIMESTAMPTZ created_at "생성 시각"
+    }
+
+    idempotency_keys {
+        UUID key PK "멱등성 키"
+        UUID user_id FK "사용자 ID"
+        CHAR request_hash "요청 해시"
+        JSONB response_payload "저장된 응답"
+        INT status_code "상태 코드"
+        TIMESTAMPTZ created_at "생성 시각"
+        TIMESTAMPTZ locked_at "잠금 시각"
+    }
+
+    beneficiaries {
+        UUID beneficiary_id PK "자주 쓰는 계좌 ID"
+        UUID owner_user_id FK "소유자 ID"
+        VARCHAR nickname "별칭"
+        VARCHAR account_holder_name "예금주명"
+        VARCHAR account_number "계좌번호"
+        VARCHAR bank_code "은행 코드"
+        TIMESTAMPTZ created_at "등록 시각"
+    }
+
+    notifications {
+        UUID notification_id PK "알림 ID"
+        UUID user_id FK "사용자 ID"
+        VARCHAR type "알림 종류 (e.g., DEPOSIT, WITHDRAWAL, TRANSFER_SUCCESS)"
+        TEXT content "알림 내용"
+        BOOLEAN is_read "읽음 여부"
+        TIMESTAMPTZ created_at "생성 시각"
+    }
+
+    users_history {
+        BIGSERIAL history_id PK "히스토리 ID"
+        UUID user_id "원본 user_id"
+        VARCHAR name "이름 (변경 후)"
+        VARCHAR email "이메일 (변경 후)"
+        TIMESTAMPTZ change_timestamp "변경 시각"
+        VARCHAR action_type "변경 유형 (INSERT, UPDATE, DELETE)"
+        UUID changed_by_user_id "변경 사용자 ID"
+    }
+
+    accounts_history {
+        BIGSERIAL history_id PK "히스토리 ID"
+        UUID account_id "원본 account_id"
+        DECIMAL balance "잔액 (변경 후)"
+        VARCHAR account_status "상태 (변경 후)"
+        TIMESTAMPTZ change_timestamp "변경 시각"
+        VARCHAR action_type "변경 유형 (INSERT, UPDATE, DELETE)"
+        UUID changed_by_user_id "변경 사용자 ID"
+    }
+
+    users ||--o{ accounts : "보유"
+    users ||--|| auth_credentials : "인증"
+    users ||--o{ idempotency_keys : "요청"
+    users ||--o{ users_history : "감사"
+    accounts ||--o{ accounts_history : "감사"
+    accounts ||--o{ ledger_entries : "포함"
+    ledger_transactions ||--o{ ledger_entries : "구성"
+    users ||--o{ kyc_verifications : "신원확인"
+    users ||--o{ login_history : "로그인기록"
+    users ||--o{ beneficiaries : "자주쓰는계좌"
+    users ||--o{ notifications : "알림"
+    accounts }o--|| transfers : "출금"
+    accounts }o--|| transfers : "입금"
+    ledger_transactions ||--|| transfers : "실행"
+

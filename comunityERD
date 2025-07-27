@@ -1,0 +1,102 @@
+erDiagram
+    users {
+        INT user_id PK "사용자 고유 식별자"
+        VARCHAR email UK NOT NULL "로그인 ID"
+        VARCHAR password_hash NOT NULL "해시된 비밀번호"
+        VARCHAR username UK NOT NULL "공개 사용자 이름"
+        VARCHAR full_name "실명 (선택)"
+        VARCHAR avatar_url "프로필 사진 URL"
+        TEXT bio "자기소개"
+        ENUM user_status NOT NULL "계정 상태 ('active', 'deleted')"
+        DATETIME created_at NOT NULL "계정 생성 시각"
+    }
+
+    roles {
+        INT role_id PK "역할 고유 식별자"
+        VARCHAR role_name UK NOT NULL "역할 이름 ('Member', 'Mentor', 'Mentee', 'Admin')"
+    }
+
+    user_roles {
+        INT user_id_fk PK NOT NULL "FK to users.user_id"
+        INT role_id_fk PK NOT NULL "FK to roles.role_id"
+    }
+
+    posts {
+        INT post_id PK "게시물 고유 식별자"
+        INT author_user_id_fk NOT NULL "FK to users.user_id"
+        VARCHAR title NOT NULL "제목"
+        TEXT body NOT NULL "본문"
+        INT vote_score NOT NULL "추천수 (비정규화)"
+        INT comment_count NOT NULL "댓글수 (비정규화)"
+        ENUM status NOT NULL "게시물 상태 ('published', 'deleted')"
+        DATETIME created_at NOT NULL "생성 시각"
+        DATETIME updated_at NOT NULL "마지막 수정 시각"
+    }
+
+    comments {
+        INT comment_id PK "댓글 고유 식별자"
+        INT post_id_fk NOT NULL "FK to posts.post_id"
+        INT author_user_id_fk NOT NULL "FK to users.user_id"
+        INT parent_comment_id_fk "FK to comments.comment_id (대댓글)"
+        TEXT body NOT NULL "댓글 내용"
+        INT vote_score NOT NULL "추천수 (비정규화)"
+        DATETIME created_at NOT NULL "생성 시각"
+    }
+
+    tags {
+        INT tag_id PK "태그 고유 식별자"
+        VARCHAR tag_name UK NOT NULL "태그 이름"
+    }
+
+    post_tags {
+        INT post_id_fk PK NOT NULL "FK to posts.post_id"
+        INT tag_id_fk PK NOT NULL "FK to tags.tag_id"
+    }
+
+    votes {
+        INT vote_id PK "투표 고유 식별자"
+        INT user_id_fk NOT NULL "FK to users.user_id"
+        INT content_id NOT NULL "콘텐츠 ID (post_id or comment_id)"
+        ENUM content_type NOT NULL "콘텐츠 유형 ('post', 'comment')"
+        ENUM vote_type NOT NULL "투표 종류 ('up', 'down')"
+        DATETIME created_at NOT NULL "투표 시각"
+    }
+
+    user_skills {
+        INT user_id_fk PK NOT NULL "FK to users.user_id"
+        INT tag_id_fk PK NOT NULL "FK to tags.tag_id (기술/관심사)"
+    }
+
+    mentorships {
+        INT mentorship_id PK "멘토십 관계 고유 식별자"
+        INT mentor_user_id_fk NOT NULL "FK to users.user_id"
+        INT mentee_user_id_fk NOT NULL "FK to users.user_id"
+        ENUM status NOT NULL "관계 상태 ('pending', 'active', 'completed', 'declined')"
+        DATETIME created_at NOT NULL "관계 생성 시각"
+    }
+
+    user_point_summaries {
+        INT user_id_fk PK "FK to users.user_id"
+        INT total_points NOT NULL "현재 총 포인트 (비정규화)"
+        DATETIME last_updated_at NOT NULL "마지막 업데이트 시각"
+    }
+
+    users }o--o{ roles : "has many through"
+    user_roles ||--o{ users : "belongs to"
+    user_roles ||--o{ roles : "belongs to"
+    users ||--o{ posts : "writes"
+    users ||--o{ comments : "writes"
+    users ||--o{ votes : "casts"
+    posts ||--o{ comments : "has"
+    comments }o--o| comments : "can have replies"
+    posts }o--o{ tags : "has many through"
+    post_tags ||--o{ posts : "belongs to"
+    post_tags ||--o{ tags : "belongs to"
+    users }o--o{ tags : "has skills through"
+    user_skills ||--o{ users : "belongs to"
+    user_skills ||--o{ tags : "belongs to"
+    users ||--o{ mentorships : "as mentor"
+    users ||--o{ mentorships : "as mentee"
+    users ||--|| user_point_summaries : "has one summary"
+    votes }o..o| posts : "can be for"
+    votes }o..o| comments : "can be for"
