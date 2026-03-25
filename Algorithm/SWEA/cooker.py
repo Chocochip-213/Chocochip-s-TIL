@@ -1,5 +1,5 @@
 import sys
-sys.stdin = open("input.txt", "r")
+# sys.stdin = open("input.txt", "r")
 import itertools
 
 def SynagySum(food_list, food_synagy):

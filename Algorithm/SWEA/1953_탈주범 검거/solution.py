@@ -1,5 +1,5 @@
 import sys
-sys.stdin = open("../../B형 대비 기출/[PRO]택시 호출 서비스/input.txt", "r")
+# sys.stdin = open("input.txt", "r")
 
 T = int(input())
 for tc in range(1, T + 1):
