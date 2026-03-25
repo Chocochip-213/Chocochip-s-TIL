@@ -36,7 +36,7 @@ public class ViewPointCalculation {
 						int max_building = Math.max(left_bd, Math.max(right_bd, Math.max(left_closer_bd, right_closer_bd)));
 						// 조망권 확보세대 구하기 위한 max값 찾기
 						viewPoint += curr_bd - max_building;
-						j += skip_building; 
+						j += skip_building;
 						// 빌딩 두칸 넘어가기
 					} // 빌딩체크
 				}// 빌딩 체크 끝

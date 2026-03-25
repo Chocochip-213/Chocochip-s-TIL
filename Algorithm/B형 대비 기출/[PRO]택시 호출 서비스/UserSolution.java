@@ -3,36 +3,36 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.PriorityQueue;
 import java.util.Set;
- 
+
 class UserSolution {
     // 나눠 볼까 3x3으로 나누려면
     // 만약에 N이 10000이라고 가정.
     // (0,0)(3333,3333)까지
     // (3334, 0)(6666,3333)까지
     // (6667, 0)(9999,3333)까지 왼쪽 3개 끝
- 
+
     // (0, 3333)(3333, 6666)
     // (3334, 3333)(6666, 6666)
     // (6667, 3333)(9999, 6666)까지 중간 3개 끝
- 
+
     // (0, 6666)(3333, 9999)
     // (3334, 6666)(6666, 9999)
     // (6667, 6666)(9999, 9999) 까지 우측 3개 끝
- 
+
     // 결국에는
     // 왼쪽은
     // (0, 0)(N/3, N/3)
     // (N/3 + 1, 0)(N/3*2, N/3)
     // (N/3*2+1, 0)(N/3*3, N/3)
- 
+
     // (0, N/3)(N/3, N/3*2)
     // (N/3 + 1, N/3)(N/3*2, N/3*2)
     // (N/3*2+1, N/3)(N/3*3, N/3*2)
- 
+
     // (0, N/3*2)(N/3, N/3*3)
     // (N/3+1, N/3*2)(N/3*2, N/3*3)
     // (N/3*2+1, N/3*2)(N/3*3, N/3*3)
- 
+
     // 이렇게 배열을 9개를 만들고
     // 사용자의 위치에서 상하좌우로 L을 더하고 해봤을때
     // 포함되는 배열만 순회를 해보면 될거같거든?
@@ -46,7 +46,7 @@ class UserSolution {
     // 택시가 이동하면 버전이 올라가는거야.
     // 최대버전이 많이 생기긴하는데.. 흠.
     // 일단 해보자 걍 ㅈ같다.
- 
+
     static public class Taxi {
         int tID;
         int tDist;
@@ -54,7 +54,7 @@ class UserSolution {
         int tX;
         int tY;
         int tVersion;
- 
+
         Taxi(int tID, int tDist, int tUserDist, int tX, int tY, int tVersion) {
             this.tID = tID;
             this.tDist = tDist;
@@ -63,22 +63,22 @@ class UserSolution {
             this.tY = tY;
             this.tVersion = tVersion;
         }
- 
+
     }
- 
+
     public int findBucket(int x, int y) {
         // (0, 0)(N/3, N/3) 1번
         // (N/3 + 1, 0)(N/3*2, N/3) 2번
         // (N/3*2+1, 0)(N/3*3, N/3) 3번
- 
+
         // (0, N/3)(N/3, N/3*2) 4번
         // (N/3 + 1, N/3)(N/3*2, N/3*2) 5번
         // (N/3*2+1, N/3)(N/3*3, N/3*2) 6번
- 
+
         // (0, N/3*2)(N/3, N/3*3) 7번
         // (N/3+1, N/3*2)(N/3*2, N/3*3) 8번
         // (N/3*2+1, N/3*2)(N/3*3, N/3*3) 9번
- 
+
         if (x < 0 || y < 0)
             return -1;
         if (x < citySize / 3 && y < citySize / 3)
@@ -101,21 +101,21 @@ class UserSolution {
             return 9;
         return -1;
     }
- 
+
     public int calcCallDist(int callX, int callY, int TaxiX, int TaxiY) {
         int xD = Math.abs(callX - TaxiX);
         int yD = Math.abs(callY - TaxiY);
- 
+
         return xD + yD;
     }
- 
+
     public int calcGoalDist(int callX, int callY, int goalX, int goalY) {
         int xD = Math.abs(callX - goalX);
         int yD = Math.abs(callY - goalY);
- 
+
         return xD + yD;
     }
- 
+
     static public class tComp implements Comparator<Taxi> {
         @Override
         public int compare(Taxi a, Taxi b) {
@@ -124,7 +124,7 @@ class UserSolution {
             return Integer.compare(a.tID, b.tID);
         }
     }
- 
+
     static int citySize;
     static int taxiCnt;
     static int limitCall;
@@ -135,7 +135,7 @@ class UserSolution {
     Taxi[] TaxiRaw = new Taxi[2001];
 //  ArrayList<Integer> bucket = new ArrayList<>();
     Set<Integer> bucket = new HashSet<>();
- 
+
     public void init(int N, int M, int L, int[] mXs, int[] mYs) {
         Result = new PriorityQueue<>(tp);
         for (int i = 0; i < 10; i++) {
@@ -158,14 +158,14 @@ class UserSolution {
         }
         return;
     }
- 
+
     static final int[] dx = { 0, -1, 1, 0, 0, -1, -1, 1, 1 };
     static final int[] dy = { 0, 0, 0, -1, 1, -1, 1, -1, 1 };
     static final int INF = 1 << 30;
- 
+
     public int pickup(int mSX, int mSY, int mEX, int mEY) {
         bucket.clear();
- 
+
         for (int i = 0; i < 9; i++) {
             // 8방향 버킷 찾기
             int idx = findBucket(mSX + dx[i] * limitCall, mSY + dy[i] * limitCall);
@@ -173,12 +173,12 @@ class UserSolution {
                 continue;
             bucket.add(idx);
         }
- 
+
         int GoalBucket = findBucket(mEX, mEY);
         int MinDist = INF;
         int SelectBucketIdx = -1;
         Taxi SelectTaxi = null;
- 
+
         for (int i : bucket) {
             for (Taxi taxi : TaxiBucket[i]) {
                 // 택시와 손님위치 거리계산부터.
@@ -206,7 +206,7 @@ class UserSolution {
         }
         if (SelectBucketIdx == -1)
             return -1;
- 
+
         // 원래 버킷에서 삭제하고
         TaxiBucket[SelectBucketIdx].remove(SelectTaxi);
         int UserD = calcGoalDist(mSX, mSY, mEX, mEY);
@@ -225,7 +225,7 @@ class UserSolution {
         Result.add(SelectTaxi);
         return SelectTaxi.tID;
     }
- 
+
     public Solution.Result reset(int mNo) {
         Solution.Result res = new Solution.Result();
         res.mMoveDistance = TaxiRaw[mNo].tDist;
@@ -237,7 +237,7 @@ class UserSolution {
         Result.add(t);
         return res;
     }
- 
+
     public void getBest(int[] mNos) {
         int cnt = 0;
         ArrayList<Taxi> Picked = new ArrayList<>();
@@ -250,7 +250,7 @@ class UserSolution {
             cnt++;
             Picked.add(t);
         }
- 
+
         for (Taxi i : Picked) {
             Result.add(i);
         }

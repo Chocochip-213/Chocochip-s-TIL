@@ -2,16 +2,16 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.PriorityQueue;
- 
+
 class UserSolution {
- 
+
     static public class Order {
         int mID;
         int JuiceID;
         int rawJuice;
         int remainJuice;
         int addDate;
- 
+
         Order(int mID, int JuiceID, int rawJuice, int remainJuice, int addDate) {
             this.mID = mID;
             this.JuiceID = JuiceID;
@@ -20,7 +20,7 @@ class UserSolution {
             this.addDate = addDate;
         }
     }
- 
+
     static public class jComp implements Comparator<Order> {
         @Override
         public int compare(Order a, Order b) {
@@ -28,7 +28,7 @@ class UserSolution {
             return Integer.compare(a.remainJuice, b.remainJuice);
         }
     }
- 
+
     static HashMap<Integer, int[]> remainMID;
     static HashMap<Integer, Integer> rawMID;
     static HashMap<Integer, Integer> JuiceCnt;
@@ -41,7 +41,7 @@ class UserSolution {
     static final jComp jp = new jComp();
     static final hComp hp = new hComp();
     static int totalCnt;
- 
+
     public void init(int N) {
         MaxJuice = N;
         addDate = 0;
@@ -60,7 +60,7 @@ class UserSolution {
         totalCnt = 0;
         return;
     }
- 
+
     public int order(int mID, int M, int mBeverages[]) {
         // 20,000 이하.
         // 힙큐에 집어넣기
@@ -93,10 +93,10 @@ class UserSolution {
         totalCnt++;
         return totalCnt;
     }
- 
+
     public int supply(int mBeverage) {
         // 50,000 이하.
- 
+
         // 이게 가장 무거움.
         // 최대한 Lazy하게 반영해야하는데 여기서는
         // 힙큐에서 꺼낸 필요 음료 종류 카운팅배열과
@@ -132,10 +132,10 @@ class UserSolution {
         // 그냥 remove해도될듯.
         // 여기서도 remove된경우 pop하는거 해야함 continue
         // 주문이 전부 완료된경우에는 전체 주문 개수 cnt도 -1 해주자.
- 
+
         // 이건 업데이트 아닌거 픽할건데 아마 쓸일없을듯?
 //      ArrayList<Order> picked = new ArrayList<>();
- 
+
         // 해당 음료가 필요한 주문이 없는경우임.
         if (hq[mBeverage].isEmpty())
             return -1;
@@ -152,10 +152,10 @@ class UserSolution {
         buff[mBeverage]++;
         remainMID.put(o.mID, buff);
         // 여기까지
- 
+
         // 주스 필요한 양 -1로 업데이트 ( 1개를 받았으니까 )
         o = new Order(o.mID, o.JuiceID, o.rawJuice, o.remainJuice - 1, o.addDate);
- 
+
         if (o.remainJuice == 0) {
             // 만약에 해당 주문에서 필요한 현재 주스 종류가 0이 된다면(다 받았다면)
             // 해당 주스 주스 필요 종류 -1 하기
@@ -173,7 +173,7 @@ class UserSolution {
             Version.put(o.mID, -1);
             totalCnt--;
         }
-         
+
         int how = getStatus(o.mID);
         if(how != 0 && how != -1) {
             // 만약 주문이 취소되지않은경우
@@ -185,9 +185,9 @@ class UserSolution {
         }
         return o.mID;
     }
- 
+
     public int cancel(int mID) {
- 
+
         // 1,000 이하.
         // 얘는 주문이 완료되었을때만 miD키가 삭제됨.
         if (!JuiceCnt.containsKey(mID))
@@ -195,7 +195,7 @@ class UserSolution {
         // 얘는 주문이 삭제되었을때만 키를 삭제할 예정임.
         if (!remainMID.containsKey(mID))
             return -1;
- 
+
         int[] buff = remainMID.get(mID);
         int[] array = buff.clone();
         remainMID.remove(mID);
@@ -216,10 +216,10 @@ class UserSolution {
         // 삭제할때만 지우기.
         Version.put(mID, -1);
         totalCnt--;
- 
+
         return rawMID.get(mID) - sum;
     }
- 
+
     public int getStatus(int mID) {
         // 얘는 주문이 완료되었을때만 miD키가 삭제됨.
         if (!JuiceCnt.containsKey(mID))
@@ -227,7 +227,7 @@ class UserSolution {
         // 얘는 주문이 삭제되었을때만 키를 삭제할 예정임.
         if (!remainMID.containsKey(mID))
             return -1;
- 
+
         // 얘는 지금까지 주문에 반영된 음료개수 배열
         int[] buff = remainMID.get(mID);
         // 얘는 젤처음에 들어온 음료수 개수
@@ -238,13 +238,13 @@ class UserSolution {
         }
         return result;
     }
- 
+
     public static class Hurry {
         int mID;
         int HowJuice;
         int Version;
         int addDate;
- 
+
         Hurry(int mID, int HowJuice, int Version, int addDate) {
             this.mID = mID;
             this.HowJuice = HowJuice;
@@ -252,7 +252,7 @@ class UserSolution {
             this.addDate = addDate;
         }
     }
- 
+
     public static class hComp implements Comparator<Hurry> {
         @Override
         public int compare(Hurry a, Hurry b) {
@@ -261,7 +261,7 @@ class UserSolution {
             return Integer.compare(a.addDate, b.addDate);
         }
     }
- 
+
     Solution.RESULT hurry() {
         // 10,000 이하.
         // 얘도 객체를 따로 만들어야겠네.
@@ -273,7 +273,7 @@ class UserSolution {
         // 그때 남은 음료의 개수로 다시 push해주는거임.
         // cancel은 또 -1로 버전해주면 고스트큐로 되겠지?
         // 그러면 음료개수랑 addDate, mID로 객체 만들면되겠네
- 
+
         Solution.RESULT res = new Solution.RESULT();
         res.cnt = 0;
         ArrayList<Hurry> picked = new ArrayList<>();
@@ -284,15 +284,15 @@ class UserSolution {
             if(h.Version != Version.get(h.mID)) continue;
             // 버전이 맞다면 다시 넣어주기위해 일단 add하고.
             picked.add(h);
-            res.IDs[res.cnt] = h.mID; 
+            res.IDs[res.cnt] = h.mID;
             res.cnt++;
         }
         for(Hurry k : picked) {
             hurryQ.add(k);
         }
-         
-         
+
+
         return res;
     }
- 
+
 }

@@ -102,7 +102,7 @@ public class SupplyRoute {
 
 			hq_push(0, start_idx);
 			dist[0][0] = 0;
-			
+
 			while (heapSize != 0) {
 				hq_pop();
 				int currVx = poppedV / 100;
@@ -125,7 +125,7 @@ public class SupplyRoute {
 					}
 				}
 			} // 다익스트라 시작.
-			
+
 			int endX = end_idx / 100 - 1;
 		    int endY = end_idx % 100 - 1;
 			sb.append("#").append(tc).append(" ").append(dist[N-1][N-1]).append("\n");

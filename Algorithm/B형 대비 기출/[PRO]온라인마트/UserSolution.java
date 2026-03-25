@@ -3,14 +3,14 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.PriorityQueue;
 import java.util.TreeSet;
- 
+
 class UserSolution {
     static class Product {
         int mID;
         int mCategory;
         int mCompany;
         int mPrice;
- 
+
         Product(int mID, int mCategory, int mCompany, int mPrice) {
             this.mID = mID;
             this.mCategory = mCategory;
@@ -18,7 +18,7 @@ class UserSolution {
             this.mPrice = mPrice;
         }
     }
- 
+
     static class Comp implements Comparator<Product> {
         @Override
         public int compare(Product a, Product b) {
@@ -27,14 +27,14 @@ class UserSolution {
             return Integer.compare(a.mID, b.mID);
         }
     }
- 
+
     static int[][] discount;
     static TreeSet<Product>[][] ts = new TreeSet[6][6];
     static int[][] proSize;
     static HashMap<Integer, Product> ProductRaw;
     static Comp cp = new Comp();
     static PriorityQueue<Product> hq;
- 
+
     public void init() {
         for (int i = 0; i <= 5; i++) {
             for (int j = 0; j <= 5; j++) {
@@ -46,7 +46,7 @@ class UserSolution {
         ProductRaw = new HashMap<>();
         return;
     }
- 
+
     public int sell(int mID, int mCategory, int mCompany, int mPrice) {
         // 호출 50,000
         Product p = new Product(mID, mCategory, mCompany, mPrice + discount[mCategory][mCompany]);
@@ -55,7 +55,7 @@ class UserSolution {
         ProductRaw.put(mID, p);
         return proSize[mCategory][mCompany];
     }
- 
+
     public int closeSale(int mID) {
         // 호출 5,000
         if (!ProductRaw.containsKey(mID))
@@ -65,7 +65,7 @@ class UserSolution {
         ProductRaw.remove(mID);
         return p.mPrice - discount[p.mCategory][p.mCompany];
     }
- 
+
     public int discount(int mCategory, int mCompany, int mAmount) {
         discount[mCategory][mCompany] += mAmount;
         Product p;
@@ -82,10 +82,10 @@ class UserSolution {
             }
             else break;
         }
- 
+
         return proSize[mCategory][mCompany];
     }
- 
+
     Solution.RESULT show(int mHow, int mCode) {
         // 호출 1,000
         Solution.RESULT res = new Solution.RESULT();
@@ -150,7 +150,7 @@ class UserSolution {
                 }
             }
         }
-         
+
         while(!hq.isEmpty() && res.cnt < 5) {
             Product p = hq.poll();
             res.IDs[res.cnt] = p.mID;

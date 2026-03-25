@@ -61,32 +61,32 @@ public class MinimumCostCalculation {
 			cur = parent;
 		}
 	} // 힙 push
-	
+
 	static boolean hq_pop() {
 		if(heapSize == 0) return false;
 		poppedW = heapW[1];
 		poppedV = heapV[1];
-		
+
 		heapW[1] = heapW[heapSize];
 		heapV[1] = heapV[heapSize--];
-		
+
 		int cur = 1;
-		
+
 		while(cur * 2 <= heapSize) {
 			int child = cur * 2;
 			if(child + 1 <= heapSize && heapW[child + 1] < heapW[child]) {
 				child++;
 			}
 			if(heapW[cur] <= heapW[child]) break;
-			
+
 			int tmpW = heapW[cur];
 			heapW[cur] = heapW[child];
 			heapW[child] = tmpW;
-			
+
 			int tmpV = heapV[cur];
 			heapV[cur] = heapV[child];
 			heapV[child] = tmpV;
-			
+
 			cur = child;
 		}
 		return true;
@@ -100,7 +100,7 @@ public class MinimumCostCalculation {
 		// N: 도시의 개수, M: 버스의 개수
 		StringTokenizer st;
 		init(N);
-		
+
 		for (int i = 0; i < M; i++) {
 			st = new StringTokenizer(br.readLine());
 			int u = Integer.parseInt(st.nextToken());
@@ -113,22 +113,22 @@ public class MinimumCostCalculation {
 		st = new StringTokenizer(br.readLine());
 		int startV = Integer.parseInt(st.nextToken());
 		int endV = Integer.parseInt(st.nextToken());
-		
+
 		hq_push(0, startV);
 		dist[startV] = 0;
-		
+
 		while(heapSize != 0) {
 			hq_pop();
 			int curr_W = poppedW;
 			int curr_V = poppedV;
-			
+
 			if(dist[curr_V] < curr_W) continue;
 			if(curr_V == endV) System.out.println(dist[curr_V]);
-			
+
 			for(int i = head[curr_V]; i != -1; i = next[i]) {
 				int nextV = to[i];
 				int nextW = curr_W + weight[i];
-				
+
 				if(dist[nextV] > nextW) {
 					dist[nextV] = nextW;
 					hq_push(nextW, nextV);

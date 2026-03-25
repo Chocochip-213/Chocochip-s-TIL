@@ -28,7 +28,7 @@ public class Simple369Game {
 			else print_sb.append(" ");
 			// 포함되었다면
 		} // 수열 반복문
-		
+
 		System.out.print(print_sb);
 	} // 메인문
 }

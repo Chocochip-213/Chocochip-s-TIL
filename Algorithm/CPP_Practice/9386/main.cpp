@@ -38,12 +38,12 @@ int main(int argc, char** argv)
 			}
 			else{
 				if(max < one_cnt) max = one_cnt;
-				
+
 				one_cnt = 0;
 			}
 		}
 		if(max < one_cnt) max = one_cnt;
-		
+
 		cout << "#" << test_case << " " << max << endl;
 
 

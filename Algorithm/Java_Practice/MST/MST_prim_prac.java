@@ -115,7 +115,7 @@ public class MST_prim_prac {
 			addEdge(u, v, w);
 			addEdge(v, u, w);
 		}
-		
+
 
 		boolean[] visited = new boolean[MAX_V];
 		long total_w = 0;

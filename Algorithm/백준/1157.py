@@ -18,29 +18,29 @@ int main()
     int same=0;
     int cash;
     int remem;
-    
+
 
         scanf("%s", word);
 
-    
+
         do
         {
             cash = word[i];
-            
+
             if(word[i] >= 97 || word[i] <= 122)
             alpha[cash-32] = alpha[cash-32] + 1;
-            
+
             alpha[cash] = alpha[cash] + 1;
             i++;
         }while(word[i]!=NULL);
-        
-        
-        
+
+
+
         Bignum = alpha[65];
         remem = 65;
             for(j=65; j<90; j++)
             {
-                
+
                 if(Bignum>alpha[j+1])
                   {
                      Bignum = Bignum;
@@ -58,16 +58,16 @@ int main()
                     same = 0;
                 }
             }
-            
-            
+
+
     if(same>0)
         printf("?");
     else
         printf("%c", remem);
-    
-        
-        
-        
+
+
+
+
 }
 
 

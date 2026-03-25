@@ -14,7 +14,7 @@ public class MaxMinGap {
 		StringBuilder sb = new StringBuilder();
 		int T = Integer.parseInt(br.readLine());
 		// T: 테케
-		
+
 		for(int tc = 1; tc <= T; tc++) {
 			int N = Integer.parseInt(br.readLine());
 			// N: 양수의 개수

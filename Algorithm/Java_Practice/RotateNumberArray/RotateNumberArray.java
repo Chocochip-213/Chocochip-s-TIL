@@ -34,8 +34,8 @@ public class RotateNumberArray {
 					arr[i][j] = Integer.parseInt(st.nextToken());
 				} // 열 순회
 			} // 행 순회
-			
-			
+
+
 			result[0] = rotate(arr, N); // 90도
 			result[1] = rotate(result[0], N); // 180도
 			result[2] = rotate(result[1], N); // 270도

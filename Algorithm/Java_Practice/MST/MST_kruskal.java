@@ -19,29 +19,29 @@ public class MST_kruskal {
 	static int[] w = new int[MAX_E]; // 가중치
 	static Integer[] idx = new Integer[MAX_E];
 	static int[] parents = new int[10005];
-	
+
 	static void init(int v) {
 		for(int i = 1; i <= v; i++){
 			parents[i] = i;
 		}
 	}
-	
+
 	static int find(int x) {
 		if (parents[x] == x) return x;
-		
+
 		return parents[x] = find(parents[x]);
 	}
-	
+
 	static void union(int x, int y) {
 		int rootX = find(x);
 		int rootY = find(y);
-		
+
 		if (rootX != rootY) {
 			parents[rootY] = rootX;
 		}
 	}
-	
-	
+
+
 	public static void main(String[] args) throws Exception {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		StringBuilder sb = new StringBuilder();
@@ -56,13 +56,13 @@ public class MST_kruskal {
 			u[i] = Integer.parseInt(st.nextToken());
 			v[i] = Integer.parseInt(st.nextToken());
 			w[i] = Integer.parseInt(st.nextToken());
-			
+
 			idx[i] = i;
 		}// 그래프 입력받기 / 정점1 정점2 가중치
-		
+
 		Arrays.sort(idx, 0, E_num, (a, b) -> Integer.compare(w[a], w[b]));
 		// 가중치순으로 인덱스 정렬하기.
-		
+
 		init(V_num);
 		for (int i = 0; i < E_num; i++) {
 			if(find(u[idx[i]]) != find(v[idx[i]])) {
@@ -72,9 +72,9 @@ public class MST_kruskal {
 				if(earlyCount >= V_num - 1) break;
 			}
 		}
-		
+
 		System.out.println(w_sum);
-		
-		
+
+
 	} // 메인문 끝
 }

@@ -11,11 +11,11 @@ public class HyunjuBoxChanging {
 		StringTokenizer st;
 		int T = Integer.parseInt(br.readLine());
 		int L, R;
-		// T: 테케 수 
+		// T: 테케 수
 		for(int tc = 1; tc <= T; tc++) {
 			st = new StringTokenizer(br.readLine());
 			int N = Integer.parseInt(st.nextToken());
-			int [] box = new int[N]; 
+			int [] box = new int[N];
 			// N개의 상자 생성.
 			int Q = Integer.parseInt(st.nextToken());
 			// Q회 숫자바꾸기 수행.

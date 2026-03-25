@@ -49,7 +49,7 @@ public class WordPlacementFinder {
 			 sb.append("#").append(tc).append(" ").append(wordPlace).append("\n");
 		} // tc문 끝
 		System.out.print(sb);
-		
+
 	} // 메인문 끝
-	
+
 }

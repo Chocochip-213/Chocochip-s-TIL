@@ -14,11 +14,11 @@ public class MazeExploration {
 	static int end_idx;
 	static final int[] dx = {-1, 1, 0, 0}; // 상하
 	static final int[] dy = {0, 0, -1, 1}; // 좌우
-	
+
 	static void q_push(int v) { q[tail] = v; tail = (tail + 1) % MAX_Q; }
 	static int q_pop() { int v = q[head]; head = (head + 1) % MAX_Q; return v; }
 	static boolean q_isEmpty() { return head == tail; }
-	
+
 	static int bfs(int start, int end, int N, int M) {
 		dist[0][0] = 1;
 		int er = end / 10000;
@@ -41,7 +41,7 @@ public class MazeExploration {
 		} // q 반복문
 		return 0;
 	} // bfs 함수
-	
+
 	public static void main(String[] args) throws Exception {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		StringBuilder sb = new StringBuilder();

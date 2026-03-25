@@ -43,6 +43,6 @@ public class PasswordGenerator {
 			sb.append("\n");
 		} // tc문 끝
 		System.out.print(sb);
-		
+
 	} // 메인 문 끝
 }
